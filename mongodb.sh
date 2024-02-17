@@ -33,7 +33,7 @@ cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGFI
 
 VALIDATE $? "Copying MongoDB Repo"
 
-dnf list installed mongodb-org
+dnf list installed mongodb-org &>> $LOGFILE
 
 if [ $? -ne 0 ]
 then
