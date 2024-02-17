@@ -51,7 +51,7 @@ systemctl start mongod &>> $LOGFILE
 
 VALIDATE $? "Starting Mongo DB Service"
 
-sed -i 's/127.0.0.1/0.0.0.0/' /etc/mongod.conf &>> $LOGFILE
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>> $LOGFILE
 
 VALIDATE $? "Updating the listen address"
 
