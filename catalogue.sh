@@ -61,7 +61,7 @@ else
     echo -e "roboshop user already created.....$Y SKIPPING $N"
 fi
 
-test -f /app &>> $LOGFILE
+test -d /app &>> $LOGFILE
 
 if [ $? -ne 0 ]
 then
