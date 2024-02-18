@@ -1,60 +1,65 @@
 #!/bin/bash
 
 ID=$(id -u)
-TIMESTAMP=$(date +%F-%H-%M-%S)
-LOGFILE="/tmp/$0-$TIMESTAMP.log"
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
 N="\e[0m"
+TIMESTAMP=$(date +%F-%H-%M-%S)
+LOGFILE="/tmp/$0-$TIMESTAMP.log"
 
 VALIDATE(){
     if [ $1 -ne 0 ]
     then
-        echo -e "$2 $R .....FAILED $N"
+        echo -e "$2 .....$R FAILED $N"
         exit 1
     else
-        echo -e "$2 $G .....SUCCESS $N"
+        echo -e "$2 .....$G SUCCESS $N"
     fi
 }
 
-echo "Script started execution at $TIMESTAMP" &>> $LOGFILE
-
+#Validate the root user access
 if [ $ID -ne 0 ]
 then
     echo -e "$R ERROR:: Please run as a root user $N"
     exit 1
 else
-    echo -e "$G You are a root user $N"
+    echo -e "$G You are root user $N"
 fi
 
-# Use Absolute path
-cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGFILE
+#Check & Copy the Mongodb repo file to repos directory
+test -f /etc/yum.repos.d/mongo.repo &>> $LOGFILE
 
-VALIDATE $? "Copying MongoDB Repo"
+if [ $? -ne 0 ]
+then    
+    cp /home/centos/shell-script/mongo.repo /etc/yum.repos.d/mongo.repo  &>> $LOGFILE
+    VALIDATE $? "Copying MongoDB repo"
+else
+    echo -e "mongo.repo file already exists in repos directory .....$Y SKIPPING $N"
+fi
 
-dnf list installed mongodb-org &>> $LOGFILE
+#Validate whether the Mongo
+yum list installed mongodb-org &>> $LOGFILE
 
 if [ $? -ne 0 ]
 then
-    dnf install mongodb-org -y &>> $LOGFILE
-    VALIDATE $? "MongoDB Installation"
+    yum install mongodb-org -y &>> $LOGFILE
 else
-    echo -e "Already Installed......$Y SKIPPING $N"
+    echo -e "Already installed .....$Y SKIPPING $N"
 fi
 
 systemctl enable mongod &>> $LOGFILE
 
-VALIDATE $? "Enabling Mongo DB Service"
+VALIDATE $? "Enabling mongod"
 
 systemctl start mongod &>> $LOGFILE
 
-VALIDATE $? "Starting Mongo DB Service"
+VALIDATE $? "Starting mongod"
 
-sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf &>> $LOGFILE
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
 
-VALIDATE $? "Updating the listen address"
+VALIDATE $? "Adding remote access to MongoDB"
 
-systemctl restart mongod &>> $LOGFILE
+systemctl restart mongod
 
-VALIDATE $? "Restarting the mongodb service"
+VALIDATE $? "Restarting the mongod service"
