@@ -30,9 +30,9 @@ fi
 
 #Validate already installed nodejs version
 dnf list installed nodejs &>> $LOGFILE
-if [ $? -ne 0]
+if [ $? -ne 0 ]
 then
-    echo -e "ERROR:: No nodejs version is available"
+    echo -e "$R ERROR:: No nodejs version is available $N"
     exit 1
 else
     dnf module disable nodejs -y &>> $LOGFILE
