@@ -79,7 +79,7 @@ unzip /tmp/catalogue.zip -d /app &>> $LOGFILE
 
 VALIDATE $? "Unzipping catalogue.zip file in /app directory"
 
-npm install &>> $LOGFILE
+npm install --prefix ./app &>> $LOGFILE
 
 VALIDATE $? "Installing Dependencies"
 
