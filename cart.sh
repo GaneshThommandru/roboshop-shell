@@ -42,57 +42,36 @@ mkdir -p /app &>> $LOGFILE
 
 VALIDATE $? "Creating app directory"
 
-curl -L -o /tmp/user.zip https://roboshop-builds.s3.amazonaws.com/user.zip &>> $LOGFILE
+curl -L -o /tmp/cart.zip https://roboshop-builds.s3.amazonaws.com/cart.zip &>> $LOGFILE
 
-VALIDATE $? "Downloading user.zip"
+VALIDATE $? "Downloading cart.zip"
 
-unzip -o /tmp/user.zip -d /app &>> $LOGFILE
+unzip -o /tmp/cart.zip -d /app &>> $LOGFILE
 
-VALIDATE $? "Unzipping user.zip in /app dir"
+VALIDATE $? "Unzipping cart.zip in /app dir"
 
 npm install --prefix /app &>> $LOGFILE
 
 VALIDATE $? "Installing dependencies"
 
-test -f /etc/systemd/system/user.service &>> $LOGFILE
+test -f /etc/systemd/system/cart.service &>> $LOGFILE
 
 if [ $? -ne 0 ]
 then
-    cp /home/centos/roboshop-shell/user.service /etc/systemd/system/user.service &>> $LOGFILE
+    cp /home/centos/roboshop-shell/cart.service /etc/systemd/system/cart.service &>> $LOGFILE
     VALIDATE $? "Copying the user.service"
 else
     echo -e "User service file already exists ....$Y SKIPPING $N"
 fi
-
+    
 systemctl daemon-reload &>> $LOGFILE
 
 VALIDATE $? "Daemon reload"
 
-systemctl enable user
+systemctl enable cart &>> $LOGFILE
 
 VALIDATE $? "Enabling user service"
 
-systemctl start user
+systemctl start cart &>> $LOGFILE
 
 VALIDATE $? "Starting user service"
-
-test -f /etc/yum.repos.d/mongo.repo &>> $LOGFILE
-if [ $? -ne 0 ]
-then
-    cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGFILE
-    VALIDATE $? "Copying Mongodb repo"
-else
-    echo -e "Mongodb repo already exists....$Y SKIPPING $N"
-fi
-
-dnf install mongodb-org-shell -y
-
-VALIDATE $? "Installing mongodb client" &>> $LOGFILE
-
-mongo --host mongodb.ganeshthommandru.online < /app/schema/user.js &>> $LOGFILE
-
-VALIDATE $? "Loading Users data"
-
-systemctl restart user &>> $LOGFILE
-
-VALIDATE $? "Restarting user service"
