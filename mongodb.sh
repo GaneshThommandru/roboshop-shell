@@ -32,7 +32,7 @@ test -f /etc/yum.repos.d/mongo.repo &>> $LOGFILE
 
 if [ $? -ne 0 ]
 then    
-    cp /home/centos/shell-script/mongo.repo /etc/yum.repos.d/mongo.repo  &>> $LOGFILE
+    cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo  &>> $LOGFILE
     VALIDATE $? "Copying MongoDB repo"
 else
     echo -e "mongo.repo file already exists in repos directory .....$Y SKIPPING $N"
