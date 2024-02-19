@@ -26,36 +26,41 @@ else
     echo "You are root user"
 fi
 
-dnf module disable mysql -y
+dnf module disable mysql -y &>> $LOGFILE
 
 VALIDATE $? "Disabling existing MySQL module"
 
-test -f /etc/yum.repos.d/mysql.repo
+test -f /etc/yum.repos.d/mysql.repo &>> $LOGFILE
 
 if [ $? -ne 0 ]
 then
-    cp /home/centos/roboshop-shell/mysql.repo /etc/yum.repos.d/mysql.repo
-    VALIDATE $? "Cpoying MySQL repo file to repos directory"
+    cp /home/centos/roboshop-shell/mysql.repo /etc/yum.repos.d/mysql.repo &>> $LOGFILE
+    VALIDATE $? "Copying MySQL repo file to repos directory"
 else
     echo -e "MySQL repo file already exists.....$Y SKIPPING $N"
 fi
 
-dnf install mysql-community-server -y
+dnf list installed mysql-community-server 
+if [ $? -ne 0 ]
+then
+    dnf install mysql-community-server -y &>> $LOGFILE
+    VALIDATE $? "Installing MySQL Community Server"
+else
+    echo "MySQL DB is already installed....$Y SKIPPING $N"
+fi
 
-VALIDATE $? "Installing MySQL Community Server"
-
-systemctl enable mysqld -y
+systemctl enable mysqld &>> $LOGFILE
 
 VALIDATE $? "Enabling MySQL DB"
 
-systemctl start mysqld -y
+systemctl start mysqld &>> $LOGFILE
 
 VALIDATE $? "Start MySQL DB"
 
-mysql_secure_installation --set-root-pass RoboShop@1
+mysql_secure_installation --set-root-pass RoboShop@1 &>> $LOGFILE
 
 VALIDATE $? "Changing mysql root user password"
 
-mysql -uroot -pRoboShop@1
+mysql -uroot -pRoboShop@1 &>> $LOGFILE
 
 VALIDATE $? "Test MySQL Connection"
