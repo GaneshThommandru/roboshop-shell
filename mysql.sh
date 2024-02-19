@@ -40,13 +40,13 @@ else
     echo -e "MySQL repo file already exists.....$Y SKIPPING $N"
 fi
 
-dnf list installed mysql-community-server 
+dnf list installed mysql-community-server &>> $LOGFILE 
 if [ $? -ne 0 ]
 then
     dnf install mysql-community-server -y &>> $LOGFILE
     VALIDATE $? "Installing MySQL Community Server"
 else
-    echo "MySQL DB is already installed....$Y SKIPPING $N"
+    echo -e "MySQL DB is already installed....$Y SKIPPING $N"
 fi
 
 systemctl enable mysqld &>> $LOGFILE
@@ -57,10 +57,10 @@ systemctl start mysqld &>> $LOGFILE
 
 VALIDATE $? "Start MySQL DB"
 
-mysql_secure_installation --set-root-pass RoboShop@1 &>> $LOGFILE
+mysql_secure_installation --set-root-pass RoboShop@1
 
 VALIDATE $? "Changing mysql root user password"
 
-mysql -uroot -pRoboShop@1 &>> $LOGFILE
+mysql -uroot -pRoboShop@1
 
 VALIDATE $? "Test MySQL Connection"
