@@ -77,6 +77,10 @@ else
     echo -e "Mongodb repo already exists....$Y SKIPPING $N"
 fi
 
+dnf install mongodb-org-shell -y
+
+VALIDATE $? "Installing mongodb client"
+
 mongo --host mongodb.ganeshthommandru.online < /app/schema/user.js &>> $LOGFILE
 
 VALIDATE $? "Loading Users data"
