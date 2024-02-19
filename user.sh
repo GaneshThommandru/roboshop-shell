@@ -79,7 +79,7 @@ fi
 
 dnf install mongodb-org-shell -y
 
-VALIDATE $? "Installing mongodb client"
+VALIDATE $? "Installing mongodb client" &>> $LOGFILE
 
 mongo --host mongodb.ganeshthommandru.online < /app/schema/user.js &>> $LOGFILE
 
