@@ -60,7 +60,3 @@ VALIDATE $? "Start MySQL DB"
 mysql_secure_installation --set-root-pass RoboShop@1
 
 VALIDATE $? "Changing mysql root user password"
-
-mysql -uroot -pRoboShop@1
-
-VALIDATE $? "Test MySQL Connection"
