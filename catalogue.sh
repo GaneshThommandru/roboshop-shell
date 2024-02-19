@@ -105,7 +105,7 @@ then
     cp /home/centos/roboshop-shell/mongo.repo /etc/yum.repos.d/mongo.repo &>> $LOGFILE
     VALIDATE $? "Copying mongo.repo to repos directory"
 else
-    echo "Mongo.repo file exists already in repos directory.....$Y SKIPPING $N"
+    echo -e "Mongo.repo file exists already in repos directory.....$Y SKIPPING $N"
 fi
 
 dnf list installed mongodb-org-shell &>> $LOGFILE
@@ -115,7 +115,7 @@ then
     dnf install mongodb-org-shell -y &>> $LOGFILE
     VALIDATE $? "Installing MongoDB Client"
 else
-    echo "MongoDB Client is already installed.....$Y SKIPPING $N"
+    echo -e "MongoDB Client is already installed.....$Y SKIPPING $N"
 fi
 
 mongo --host mongodb.ganeshthommandru.online < /app/schema/catalogue.js &>> $LOGFILE
