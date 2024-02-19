@@ -59,19 +59,19 @@ test -f /etc/systemd/system/cart.service &>> $LOGFILE
 if [ $? -ne 0 ]
 then
     cp /home/centos/roboshop-shell/cart.service /etc/systemd/system/cart.service &>> $LOGFILE
-    VALIDATE $? "Copying the user.service"
+    VALIDATE $? "Copying the cart.service"
 else
-    echo -e "User service file already exists ....$Y SKIPPING $N"
+    echo -e "Cart service file already exists ....$Y SKIPPING $N"
 fi
-    
+
 systemctl daemon-reload &>> $LOGFILE
 
 VALIDATE $? "Daemon reload"
 
 systemctl enable cart &>> $LOGFILE
 
-VALIDATE $? "Enabling user service"
+VALIDATE $? "Enabling cart service"
 
 systemctl start cart &>> $LOGFILE
 
-VALIDATE $? "Starting user service"
+VALIDATE $? "Starting cart service"
