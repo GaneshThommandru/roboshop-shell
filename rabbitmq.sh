@@ -26,33 +26,33 @@ else
     echo -e "You are a root user"
 fi
 
-curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash
+curl -s https://packagecloud.io/install/repositories/rabbitmq/erlang/script.rpm.sh | bash &>> $LOGFILE
 
 VALIDATE $? "Downloading erlang repos for RabbitMQ"
 
-curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash
+curl -s https://packagecloud.io/install/repositories/rabbitmq/rabbitmq-server/script.rpm.sh | bash &>> $LOGFILE
 
 VALIDATE $? "Downlaoding RabbitMQ repos"
 
-dnf install rabbitmq-server -y
+dnf install rabbitmq-server -y &>> $LOGFILE
 
 VALIDATE $? "Installing RabbitMQ Server"
 
-systemctl enable rabbitmq-server
+systemctl enable rabbitmq-server &>> $LOGFILE
 
 VALIDATE $? "Enabling RabbitMQ Server"
 
-systemctl start rabbitmq-server
+systemctl start rabbitmq-server &>> $LOGFILE
 
 VALIDATE $? "Starting RabbitMQ Server"
 
-rabbitmqctl authenticate_user roboshop roboshop123
+rabbitmqctl authenticate_user roboshop roboshop123 &>> $LOGFILE
 if [ $? -ne 0 ]
 then
-    rabbitmqctl add_user roboshop roboshop123
+    rabbitmqctl add_user roboshop roboshop123 &>> $LOGFILE
     VALIDATE $? "Adding RabbitMQ User and password"
 
-    rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*"
+    rabbitmqctl set_permissions -p / roboshop ".*" ".*" ".*" &>> $LOGFILE
 
     VALIDATE $? "Setting Permissions"
 else 
