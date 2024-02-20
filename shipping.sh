@@ -58,7 +58,7 @@ unzip -o /tmp/shipping.zip -d /app &>> $LOGFILE
 
 VALIDATE $? "Unzipping shipping.zip file"
 
-mvn clean package --prefix /app &>> $LOGFILE
+mvn -f /app clean package &>> $LOGFILE
 
 VALIDATE $? "Installing Dependencies"
 
