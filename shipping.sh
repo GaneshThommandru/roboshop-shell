@@ -62,7 +62,7 @@ mvn -f /app clean package &>> $LOGFILE
 
 VALIDATE $? "Installing Dependencies"
 
-mv /app/target/shiping-1.0.jar /app/target/shipping.jar &>> $LOGFILE
+mv /app/target/shipping-1.0.jar /app/target/shipping.jar &>> $LOGFILE
 
 VALIDATE $? "Renaming shipping.jar file"
 
