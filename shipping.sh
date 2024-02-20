@@ -26,3 +26,70 @@ else
     echo -e "You are a root user"
 fi
 
+dnf install maven -y &>> $LOGFILE
+
+VALIDATE $? "Installing Maven"
+
+useradd roboshop &>> $LOGFILE
+
+VALIDATE $? "Creating roboshop user"
+
+mkdir -p /app &>> $LOGFILE
+
+VALIDATE $? "Creating /app directory"
+
+test -f /tmp/shipping.zip &>> $LOGFILE
+
+if [ $? -ne 0 ]
+then
+    curl -L -o /tmp/shipping.zip https://roboshop-builds.s3.amazonaws.com/shipping.zip &>> $LOGFILE
+    VALIDATE $? "Downloading Shipping.zip file"
+else
+    echo -e "Shipping.zip file downloaded already.... $Y SKIPPING $N"
+fi
+
+unzip -o /tmp/shipping.zip -d /app &>> $LOGFILE
+
+VALIDATE $? "Unzipping shipping.zip file"
+
+mvn clean package --prefix /app &>> $LOGFILE
+
+VALIDATE $? "Installing Dependencies"
+
+mv /app/target/shiping-1.0.jar /app/target/shipping.jar &>> $LOGFILE
+
+VALIDATE $? "Renaming shipping.jar file"
+
+test -f /etc/systemd/system/shipping.service &>> $LOGFILE
+
+if [ $? -ne 0 ]
+then
+    cp /home/centos/roboshop-shell/shipping.service /etc/systemd/system/shipping.service &>> $LOGFILE
+    VALIDATE $? "Copying Shipping service"
+else
+    echo -e "Shipping service file already copied....$Y SKIPPING $N"
+fi
+
+systemctl daemon-reload &>> $LOGFILE
+
+VALIDATE $? "Deamon Reload"
+
+systemctl enable shipping.service &>> $LOGFILE
+
+VALIDATE $? "Enabling Shipping Service"
+
+systemctl start shipping.service &>> $LOGFILE
+
+VALIDATE $? "Starting Shipping Service"
+
+dnf install mysql -y &>> $LOGFILE
+
+VALIDATE $? "Installing MySQL client"
+
+mysql -h mysql.ganeshthommandru.online -uroot -pRoboShop@1 < /app/schema/shipping.sql &>> $LOGFILE
+
+VALIDATE $? "Loading Schema Data"
+
+systemctl restart shipping.service &>> $LOGFILE
+
+VALIDATE $? "Restarting shipping service"
