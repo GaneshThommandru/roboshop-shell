@@ -47,7 +47,7 @@ curl -o /tmp/web.zip https://roboshop-builds.s3.amazonaws.com/web.zip
 
 VALIDATE $? "Downloading roboshop zip file"
 
-unzip -o /tmp/web.zip -d /usr/share/nginx/
+unzip -o /tmp/web.zip -d /usr/share/nginx/html
 
 VALIDATE $? "Extracting roboshop html files"
 
