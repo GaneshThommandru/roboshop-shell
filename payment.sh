@@ -58,7 +58,9 @@ unzip -o /tmp/payment.zip -d /app &>> $LOGFILE
 
 VALIDATE $? "Unzipping payment.zip"
 
-pip3.6 install -t /app -r /app/requirements.txt &>> $LOGFILE
+cd /app
+
+pip3.6 install -r requirements.txt &>> $LOGFILE
 
 VALIDATE $? "Installing Dependencies"
 
@@ -67,7 +69,7 @@ test -f /etc/systemd/system/payment.service &>> $LOGFILE
 if [ $? -ne 0 ]
 then
     cp /home/centos/roboshop-shell/payment.service /etc/systemd/system/payment.service &>> $LOGFILE
-    VALIDATE $? "Copying Payement.service file"
+    VALIDATE $? "Copying Payment.service file"
 else
     echo -e "Payment.service file already exists..... $Y SKIPPING $N"
 fi
