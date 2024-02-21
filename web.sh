@@ -51,7 +51,7 @@ unzip -o /tmp/web.zip -d /usr/share/nginx/
 
 VALIDATE $? "Extracting roboshop html files"
 
-cp /home/centos/roboshop.conf /etc/nginx/default.d/roboshop.conf
+cp -f /home/centos/roboshop-shell/roboshop.conf /etc/nginx/default.d/roboshop.conf
 
 VALIDATE $? "Configuring Roboshop"
 
