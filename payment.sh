@@ -58,7 +58,9 @@ unzip -o /tmp/payment.zip -d /app &>> $LOGFILE
 
 VALIDATE $? "Unzipping payment.zip"
 
-cd /app
+cd /app &>> $LOGFILE
+
+VALIDATE $? "Changing the directory to /app"
 
 pip3.6 install -r requirements.txt &>> $LOGFILE
 
