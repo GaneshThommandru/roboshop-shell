@@ -15,5 +15,5 @@ do
     fi
     
     #IP_ADDRESS=$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]" --query 'Instances[0].PrivateIpAddress' --output text)
-    $(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]")
+    "$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]")"
 done
