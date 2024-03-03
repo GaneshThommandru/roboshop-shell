@@ -7,6 +7,9 @@ INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipp
 ZONE_ID=Z10454783E1JILBVMFMWM
 DOMAIN_NAME="ganeshthommandru.online"
 
+PUBLIC_IP=$(aws ec2 describe-network-interfaces --query NetworkInterfaces[*].[Attachment.[InstanceId],Association.[PublicIp]] --output=json --output text | grep -v 'i-*')
+
+
 for i in ${INSTANCES[@]};
 do 
     echo "instance is : $i"
@@ -28,11 +31,25 @@ do
         ,"Changes": [{
         "Action"              : "CREATE"
         ,"ResourceRecordSet"  : {
-            "Name"              : "'$i'.'$DOMAIN_NAME'"
+            '
+            if [ $i == "web" ]
+            then
+                "Name"              : "'$DOMAIN_NAME'"
+            else
+                "Name"              : "'$i'.'$DOMAIN_NAME'"
+            fi
+            '
             ,"Type"             : "A"
             ,"TTL"              : 1
             ,"ResourceRecords"  : [{
-                "Value"         : "'$IP_ADDRESS'"
+                "'
+                if [ $i == "web" ]
+                then
+                    "Value"         : "'$(aws ec2 describe-network-interfaces --query NetworkInterfaces[*].[Attachment.[InstanceId],Association.[PublicIp]] --output=json --output text | grep -v 'i-*')'"
+                else
+                    "Value"         : "'$IP_ADDRESS'"
+                fi
+                '"
             }]
         }
         }]
