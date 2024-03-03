@@ -4,6 +4,9 @@ AMI=ami-0f3c7d07486cad139
 SG_ID=sg-0e3316d7c9d69c2ad
 INSTANCES=("mongodb" "redis" "mysql" "rabbitmq" "catalogue" "user" "cart" "shipping" "payment" "dispatch" "web")
 
+ZONE_ID=Z10454783E1JILBVMFMWM
+DOMAIN_NAME="ganeshthommandru.online"
+
 for i in ${INSTANCES[@]};
 do 
     echo "instance is : $i"
@@ -14,6 +17,25 @@ do
         INSTANCES_TYPE="t2.micro"
     fi
     
-    #IP_ADDRESS=$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]" --query 'Instances[0].PrivateIpAddress' --output text)
-    "$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]")"
+    IP_ADDRESS=$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]" --query 'Instances[0].PrivateIpAddress' --output text)
+    #"$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]")"
+
+    aws route53 change-resource-record-sets \
+  --hosted-zone-id $ZONE_ID \
+  --change-batch "
+  {
+    "Comment": "Testing creating a record set"
+    ,"Changes": [{
+      "Action"              : "CREATE"
+      ,"ResourceRecordSet"  : {
+        "Name"              : "$i.$DOMAIN_NAME"
+        ,"Type"             : "A"
+        ,"TTL"              : 120
+        ,"ResourceRecords"  : [{
+            "Value"         : "$IP_ADDRESS"
+        }]
+      }
+    }]
+  }
+  "
 done
