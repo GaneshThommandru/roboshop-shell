@@ -19,23 +19,23 @@ do
     
     IP_ADDRESS=$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]" --query 'Instances[0].PrivateIpAddress' --output text)
     #"$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]")"
-
+    echo "$i: $IP_ADDRESS"
     aws route53 change-resource-record-sets \
-  --hosted-zone-id $ZONE_ID \
-  --change-batch "
-  {
-    "Comment": "Testing creating a record set"
-    ,"Changes": [{
-      "Action"              : "CREATE"
-      ,"ResourceRecordSet"  : {
-        "Name"              : "$i.$DOMAIN_NAME"
-        ,"Type"             : "A"
-        ,"TTL"              : 120
-        ,"ResourceRecords"  : [{
-            "Value"         : "$IP_ADDRESS"
+    --hosted-zone-id $ZONE_ID \
+    --change-batch "
+    {
+        "Comment": "Testing creating a record set"
+        ,"Changes": [{
+        "Action"              : "CREATE"
+        ,"ResourceRecordSet"  : {
+            "Name"              : "$i.$DOMAIN_NAME"
+            ,"Type"             : "A"
+            ,"TTL"              : 120
+            ,"ResourceRecords"  : [{
+                "Value"         : "$IP_ADDRESS"
+            }]
+        }
         }]
-      }
-    }]
-  }
-  "
+    }
+    "
 done
