@@ -21,7 +21,7 @@ do
     fi
     
     IP_ADDRESS=$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]" --query 'Instances[0].PrivateIpAddress' --output text)
-    #"$(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]")"
+    #"         $(aws ec2 run-instances --image-id ami-0f3c7d07486cad139 --instance-type $INSTANCES_TYPE --security-group-ids sg-0e3316d7c9d69c2ad --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$i}]")"
     echo "$i: $IP_ADDRESS"
     aws route53 change-resource-record-sets \
     --hosted-zone-id $ZONE_ID \
@@ -29,27 +29,13 @@ do
     {
         "Comment": "Testing creating a record set"
         ,"Changes": [{
-        "Action"              : "CREATE"
+        "Action"              : "UPSERT"
         ,"ResourceRecordSet"  : {
-            '
-            if [ $i == "web" ]
-            then
-                "Name"              : "'$DOMAIN_NAME'"
-            else
-                "Name"              : "'$i'.'$DOMAIN_NAME'"
-            fi
-            '
+            "Name"              : "'$i'.'$DOMAIN_NAME'"
             ,"Type"             : "A"
             ,"TTL"              : 1
             ,"ResourceRecords"  : [{
-                "'
-                if [ $i == "web" ]
-                then
-                    "Value"         : "'$(aws ec2 describe-network-interfaces --query NetworkInterfaces[*].[Attachment.[InstanceId],Association.[PublicIp]] --output=json --output text | grep -v 'i-*')'"
-                else
-                    "Value"         : "'$IP_ADDRESS'"
-                fi
-                '"
+                "Value"         : "'$IP_ADDRESS'"
             }]
         }
         }]
